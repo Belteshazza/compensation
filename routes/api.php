@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FeaturesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+
+
+/**get current applicants counts */
+Route::get('getCompensation', [FeaturesController::class, 'getCompensation']);
+
+Route::post('addNew', [FeaturesController::class, 'addNew']);
+
+Route::put('updateRecord/{id}', [FeaturesController::class, 'updateRecord']);
+
