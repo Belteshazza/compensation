@@ -29,3 +29,22 @@ Route::post('addNew', [FeaturesController::class, 'addNew']);
 
 Route::put('updateRecord/{id}', [FeaturesController::class, 'updateRecord']);
 
+Route::get('filter', [FeaturesController::class, 'filter']);
+
+Route::get('getSingle/{id}', [FeaturesController::class, 'getSingle']);
+
+Route::get('sortDesc', [FeaturesController::class, 'sortDesc']);
+
+Route::get('sortAsc', [FeaturesController::class, 'sortAsc']);
+
+Route::post('avgCity', [FeaturesController::class, 'avgCity']);
+
+Route::post('avgRole', [FeaturesController::class, 'avgRole']);
+
+
+
+
+
+
+
+
