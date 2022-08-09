@@ -20,7 +20,7 @@ class FeaturesController extends Controller
 
         return response()->json([
             'message' => 'Successful',
-            'compensation' => $compensation,            
+            'data' => $compensation            
         ], 200);
 
     }
@@ -57,8 +57,8 @@ class FeaturesController extends Controller
 
         return response()->json([
             'message' => 'Congratulations You have Successfully Added a New Record',
-            'compensation' => $compensation
-        ]);
+            'data' => $compensation
+        ],200);
 
     }
 
@@ -94,9 +94,9 @@ class FeaturesController extends Controller
         $compensation->save();
 
         return response()->json([
-            'message' => 'Congratulations You have Successfully Added a New Record',
-            'compensation' => $compensation
-        ]);
+            'message' => 'Congratulations You have Successfully updated a Record',
+            'data' => $compensation
+        ],201);
 
     }
 
@@ -110,10 +110,10 @@ class FeaturesController extends Controller
         
         $compensation = Compensation::where('id', $id)->get()->first();
 
-        return [
-            'message' => 'Successful',
-            'compensation ' => $compensation 
-        ];
+        return response()->json([
+            'message' => 'Congratulations You have Successfully updated a Record',
+            'data' => $compensation
+        ],200);
 
     }
 
@@ -175,10 +175,9 @@ class FeaturesController extends Controller
         ];
 
         return response()->json([
-            'message' => 'Congratulations You have Successfully Added a New Record',
-            'compensation' => $data,
-            'status' => 200
-        ]);
+            'message' => 'Successful',
+            'data' => $data
+        ],200);
     }
 
 
@@ -194,10 +193,9 @@ class FeaturesController extends Controller
         //orderByRaw
 
         return response()->json([
-            'message' => 'Congratulations You have Successfully Added a New Record',
-            'compensation' => $compensation,
-            'status' => 200
-       ]);
+            'message' => 'Successful',
+            'data' => $compensation
+       ],200);
 
     }
 
@@ -213,10 +211,9 @@ class FeaturesController extends Controller
         //orderByRaw
 
         return response()->json([
-            'message' => 'Congratulations You have Successfully Added a New Record',
-            'compensation' => $compensation,
-            'status' => 200
-       ]);
+            'message' => 'Successful',
+            'data' => $compensation
+       ],200);
 
     }
 
@@ -231,7 +228,7 @@ class FeaturesController extends Controller
 
         //$result= DB::select('SELECT salary from compensation WHERE city = ?', [$request->city]);
 
-        
+        $data = [];
 
          $result= Compensation::where('city', $request->city)->get('salary');
          $data['average'] =  $result->avg('salary');
@@ -240,10 +237,9 @@ class FeaturesController extends Controller
 
 
         return response()->json([
-            'message' => 'Congratulations You have Successfully Added a New Record',
-            'data' => $data,
-            'status' => 200
-       ]);
+            'message' => 'Successful',
+            'data' => $data
+        ],200);
 
     }
 
@@ -263,9 +259,8 @@ class FeaturesController extends Controller
 
         return response()->json([
             'message' => 'Successfully',
-            'data' => $data,
-            'status' => 200
-       ]);
+            'data' => $data
+       ],200);
 
     }
     
