@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCompensationTable extends Migration
+class CreateRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,12 @@ class CreateCompensationTable extends Migration
      */
     public function up()
     {
-        Schema::create('compensation', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
 
-            $table->string('industry');
-            $table->string('age');
-            $table->integer('role_id');
-            $table->string('city');
-            $table->string('work_experience');
-            $table->timestamp('timestamp');
-        
+            $table->string('role_name');
+            $table->integer('salary');
+            $table->string('currency');
 
             $table->timestamps();
         });
@@ -35,6 +31,6 @@ class CreateCompensationTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('compensation');
+        Schema::dropIfExists('roles');
     }
 }
