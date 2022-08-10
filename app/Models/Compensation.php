@@ -16,6 +16,6 @@ class Compensation extends Model
      */
     protected $table = 'compensation';
 
-    protected $fillable = ['industry','age','job','salary','currency','city','work_experience','timestamp','created_at'];
+    protected $fillable = ['industry','age','role_id','city','work_experience','timestamp','created_at'];
 
 }

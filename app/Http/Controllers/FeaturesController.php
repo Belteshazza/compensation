@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Compensation;
-use DB;
+use App\Models\Role;
 
 class FeaturesController extends Controller
 {
@@ -16,7 +16,10 @@ class FeaturesController extends Controller
     */
     public function getCompensation(){
 
-        $compensation = Compensation::Paginate(10);
+      //   = Compensation::Paginate(10);
+
+         $compensation = Compensation::join('role', 'compensation.role_id', '=', 'role.id')
+        ->paginate(10);
 
         return response()->json([
             'message' => 'Successful',
@@ -35,29 +38,43 @@ class FeaturesController extends Controller
         $request->validate([
             'industry' => ['required', 'string', 'max:255'],
             'age' => ['required', 'string'],
-            'job' => ['required'],
-            'salary' => ['required', 'string'],
+            'role_name' => ['required','string'],
+            'salary' => ['required'],
             'currency' => ['required', 'string'],
             'city' => ['required', 'string'],
             'work_experience' => ['required', 'string']
 
         ]);
 
-        $compensation = new Compensation;
-        $compensation->industry = $request->industry;
-        $compensation->age = $request->age;
-        $compensation->job = $request->job;
-        $compensation->salary = $request->salary;
-        $compensation->currency = $request->currency;
-        $compensation->city = $request->city;
-        $compensation->work_experience = $request->work_experience;
 
+         $role = Role::create([
+            'role_name' => $request->role_name,
+            'salary' => $request->salary,
+            'currency' => $request->currency,            
+        ]);
 
-        $compensation->save();
+        $compensation = Compensation::create([
+            'industry' => $request->industry,
+            'age' => $request->age,
+            'role_id' => $role->id,
+            'city' => $request->city,
+            'work_experience' => $request->work_experience,
+            
+        ],200);
+
 
         return response()->json([
             'message' => 'Congratulations You have Successfully Added a New Record',
-            'data' => $compensation
+            'data' => [
+                    'compensation' => [
+                        'industry' => $compensation->industry,
+                        'age' => $compensation->age,
+                        'role_id' => $compensation->role_id,
+                        'city' => $compensation->city,
+                        'work_experience' => $compensation->work_experience,
+                    ],
+                    'role' => $role
+                ]
         ],200);
 
     }
@@ -72,30 +89,39 @@ class FeaturesController extends Controller
         $request->validate([
             'industry' => ['required', 'string', 'max:255'],
             'age' => ['required', 'string'],
-            'job' => ['required'],
+            'role_name' => ['required'],
             'salary' => ['required', 'int'],
             'currency' => ['required', 'string'],
             'city' => ['required', 'string'],
             'work_experience' => ['required', 'string']
 
         ]);
-         
-        $compensation= Compensation::where('id', $id)->first();
 
+                 
+        $role = Role::join('compensation', 'role.id', '=', 'compensation.id')
+        ->where('role.id', $id)->first();
+
+        $role->role_name = $request->role_name;
+        $role->salary = $request->salary;
+        $role->currency = $request->currency;
+
+        $role->update();
+
+        $compensation = Compensation::join('role', 'compensation.role_id', '=', 'role.id')
+         ->where('compensation.role_id', $id)->first();
+        
         $compensation->industry = $request->industry;
         $compensation->age = $request->age;
-        $compensation->job = $request->job;
-        $compensation->salary = $request->salary;
-        $compensation->currency = $request->currency;
+        $compensation->role_id = $role->id;
         $compensation->city = $request->city;
         $compensation->work_experience = $request->work_experience;
 
-
-        $compensation->save();
-
+        $compensation->update();
+        
         return response()->json([
             'message' => 'Congratulations You have Successfully updated a Record',
-            'data' => $compensation
+           'data' => $role,
+            'data' => $compensation,
         ],201);
 
     }
@@ -107,16 +133,16 @@ class FeaturesController extends Controller
 
     public function getSingle($id){
 
+        $compensation = Compensation::join('role', 'compensation.role_id', '=', 'role.id')
+        ->where('compensation.role_id', $id)->get()->first();
         
-        $compensation = Compensation::where('id', $id)->get()->first();
 
         return response()->json([
-            'message' => 'Congratulations You have Successfully updated a Record',
+            'message' => 'Successfully',
             'data' => $compensation
         ],200);
 
     }
-
 
 
      /**
@@ -126,11 +152,11 @@ class FeaturesController extends Controller
     public function filter(Request $request)
     {
    
-        $compensation = Compensation::query();
+        $compensation = Compensation::query()->join('role', 'compensation.role_id', '=', 'role.id');
 
         $industry = $request->industry;
         $age = $request->age;
-        $job = $request->job;
+        $role_name= $request->role_name;
         $salary = $request->salary;
         $currency = $request->currency;
         $city = $request->city;
@@ -143,8 +169,8 @@ class FeaturesController extends Controller
             $compensation->where('age','LIKE','%'.$age.'%');
         }
 
-        if ($job) {
-            $compensation->where('job','LIKE','%'.$job.'%');
+        if ($role_name) {
+            $compensation->where('job_name','LIKE','%'.$role_name.'%');
         }
 
         if ($salary) {
@@ -166,7 +192,7 @@ class FeaturesController extends Controller
         $data = [
             'industry' => $industry,
             'age' => $age,
-            'job' => $job,
+            'role_name' => $role_name,
             'salary ' => $salary,
             'currency' => $currency,
             'city' => $city,
@@ -188,7 +214,7 @@ class FeaturesController extends Controller
     public function sortDesc(Request $request){
 
 
-        $compensation =Compensation::orderByRaw("industry desc, age desc, job asc, salary desc, currency desc, city desc, work_experience desc, timestamp desc, created_at desc")->paginate(10); 
+        $compensation =Compensation::orderByRaw("industry desc, age desc, role_name asc, salary desc, currency desc, city desc, work_experience desc, compensation.timestamp desc, compensation.created_at desc")->join('role', 'compensation.role_id', '=', 'role.id')->paginate(10); 
         
         //orderByRaw
 
@@ -206,7 +232,7 @@ class FeaturesController extends Controller
     
     public function sortAsc(Request $request){
 
-        $compensation =Compensation::orderByRaw("industry asc, age asc, job asc, salary asc, currency asc, city asc, work_experience asc, timestamp asc, created_at asc")->paginate(10); 
+        $compensation =Compensation::orderByRaw("industry asc, age asc, role_name asc, salary asc, currency asc, city asc, work_experience asc, compensation.timestamp asc, compensation.created_at asc")->join('role', 'compensation.role_id', '=', 'role.id')->paginate(10); 
         
         //orderByRaw
 
@@ -230,7 +256,8 @@ class FeaturesController extends Controller
 
         $data = [];
 
-         $result= Compensation::where('city', $request->city)->get('salary');
+         $result= Compensation::join('role', 'compensation.role_id', '=', 'role.id')
+         ->where('city', $request->city)->get('salary');
          $data['average'] =  $result->avg('salary');
          $data['maxium'] =  $result->max('salary');
          $data['minium'] =  $result->min('salary');
@@ -251,9 +278,9 @@ class FeaturesController extends Controller
 
     public function avgRole(Request $request){
 
-        $city = $request->input('job'); 
+        $city = $request->input('role_name'); 
 
-         $result= Compensation::where('job', $request->job)->get('salary');
+         $result= Role::where('role_name', $request->role_name)->get('salary');
          $data['average'] =  $result->avg('salary');
          
 
