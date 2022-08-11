@@ -31,6 +31,7 @@ class FeaturesController extends Controller
 
     /**
      * add New data
+     * 
      */
 
     public function addNew(Request $request){
@@ -278,7 +279,7 @@ class FeaturesController extends Controller
 
     public function avgRole(Request $request){
 
-        $city = $request->input('role_name'); 
+        $role_name = $request->input('role_name'); 
 
          $result= Role::where('role_name', $request->role_name)->get('salary');
          $data['average'] =  $result->avg('salary');
